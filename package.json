@@ -1,0 +1,47 @@
+{
+  "name": "node_base_app_orm",
+  "version": "1.0.0",
+  "description": "Node base Application with Sequlize ORM",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/subhabratastl/node_base_app.git"
+  },
+  "keywords": [
+    "node",
+    "orm",
+    "base",
+    "build"
+  ],
+  "author": "Subhabrata Sahoo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/subhabratastl/node_base_app/issues"
+  },
+  "homepage": "https://github.com/subhabratastl/node_base_app#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cookie-session": "^2.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.1",
+    "moment-timezone": "^0.5.43",
+    "mysql2": "^3.4.5",
+    "nodemailer": "^6.9.3",
+    "otp-generator": "^4.0.1",
+    "sequelize": "^6.32.1",
+    "svg-captcha": "^1.4.0",
+    "winston": "^3.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.9"
+  }
+}
