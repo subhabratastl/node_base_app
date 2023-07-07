@@ -1,0 +1,20 @@
+{
+    "en":{
+        "success": {
+            "INSERT": "Data inserted successfully.",
+            "UPDATE": "Data updated successfully.",
+            "FETCH": "Data fetched successfully.",
+            "LOGIN":"Login successful",
+            "CAPTCHA":"Captcha verification successful. You may proceed."
+        },
+        "error": {
+            "INSERT": "Error: Failed to insert data. Please try again.",
+            "UPDATE": "Error: Failed to update data. Please try again.",
+            "FETCH": "Error: Failed to fetch data. Please try again.",
+            "LOGIN":"Login failed. Please check your credentials and try again.",
+            "CAPTCHA":"Captcha verification failed. Please try again.",
+            "REFRESH_CAPTCHA":"Captcha expired. Please refresh and try again.",
+            "OLD_PASSWORD":"Old password does not match. Please enter the correct old password and try again."  
+        }
+    }
+}

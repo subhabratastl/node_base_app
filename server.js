@@ -3,9 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require("cors")
 const helmet = require("helmet")
 const rateLimit = require('express-rate-limit')
-const logger = require('./helpers/logger');
-const timeZone = require('./helpers/timezone');
-//const dbConnection = require("./app/models/index")
+const logger = require('./app/utils/logger');
+const dbConnection = require("./app/models/index")
 //const generalApi = require("./app/routes/generalRoute")
 //const adminApi = require("./app/routes/adminRoute")
 //const menuApi = require("./app/routes/menuRoute")
@@ -16,9 +15,8 @@ const session = require('express-session');
 const app = express();
 app.use(helmet());
 
-const devPORT = 8000
+const devPORT = 8001
 const baseUrl = process.env.BASE_URL || `http://localhost:${devPORT}`;
-process.env.TZ = 'Asia/Kolkata';
 
 var corsOptions = {
     origin: baseUrl
@@ -55,8 +53,6 @@ app.use(limiter)
 
 const PORT = process.env.PORT || devPORT;
 app.get("/", (req, res) => {
-    logger.info(`API endpoint called: /api/example ${timeZone()}`);
-    logger.error('API endpoint called: /api/example...error');
     res.json({ message: "Welcome to Node base application." });
 });
 
@@ -80,7 +76,6 @@ app.get('/api/auth/getCaptcha', function (req, res) {
 });
 
 app.listen(PORT, () => {
-    logger.info(`API endpoint called: /api/example `);
     console.log(`Server is running on port ${PORT}.`);
-    //dbConnection.checkConnection();
+    dbConnection.checkConnection();
 });
