@@ -5,16 +5,21 @@
             "UPDATE": "Data updated successfully.",
             "FETCH": "Data fetched successfully.",
             "LOGIN":"Login successful",
-            "CAPTCHA":"Captcha verification successful. You may proceed."
+            "CAPTCHA":"Captcha verification successful. You may proceed.",
+            "TOKEN_VALIDATION":"Token Verify Successfully"
         },
         "error": {
-            "INSERT": "Error: Failed to insert data. Please try again.",
-            "UPDATE": "Error: Failed to update data. Please try again.",
-            "FETCH": "Error: Failed to fetch data. Please try again.",
+            "COMMON_MSG":"Please try again.",
+            "VALIDATION_KEY_VALUE":"All mandatory Keys And Values are Requierd.",
+            "INSERT": "Error: Failed to insert data.",
+            "UPDATE": "Error: Failed to update data.",
+            "FETCH": "Error: Failed to fetch data.",
             "LOGIN":"Login failed. Please check your credentials and try again.",
-            "CAPTCHA":"Captcha verification failed. Please try again.",
+            "CAPTCHA":"Captcha verification failed.",
             "REFRESH_CAPTCHA":"Captcha expired. Please refresh and try again.",
-            "OLD_PASSWORD":"Old password does not match. Please enter the correct old password and try again."  
+            "OLD_PASSWORD":"Old password does not match. Please enter the correct old password and try again.",  
+            "TOKEN_VALIDATION":"Token is not verified.",
+            "TOKEN_CHECK":"Token Not Found."
         }
     }
 }

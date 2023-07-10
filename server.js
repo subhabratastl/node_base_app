@@ -4,10 +4,12 @@ const cors = require("cors")
 const helmet = require("helmet")
 const rateLimit = require('express-rate-limit')
 const logger = require('./app/utils/logger');
-const dbConnection = require("./app/models/index")
+const dbConnection = require("./app/models/connection")
 //const generalApi = require("./app/routes/generalRoute")
 //const adminApi = require("./app/routes/adminRoute")
 //const menuApi = require("./app/routes/menuRoute")
+const indexGetApi= require("./app/routes/indexGet")
+const indexPostApi= require("./app/routes/indexPost")
 var svgCaptcha = require('svg-captcha');
 const session = require('express-session');
 // const sessionSecret = require('./app/config/authConfig')
@@ -43,13 +45,10 @@ app.use(limiter)
 //     saveUninitialized: true
 // }));
 
-// app.use('/api/auth', generalApi);
-// app.use('/api/auth', adminApi);
-// app.use('/api/auth', menuApi);
-
-// require("./app/routes/adminRoute", adminApi);
-// require("./app/routes/generalRoute", generalApi);
-// require("./app/routes/menuRoute", menuApi);
+app.use('/api/auth',indexGetApi);
+app.use('/api/auth',indexPostApi);
+require("./app/routes/indexGet",indexGetApi);
+require("./app/routes/indexPost",indexPostApi);
 
 const PORT = process.env.PORT || devPORT;
 app.get("/", (req, res) => {

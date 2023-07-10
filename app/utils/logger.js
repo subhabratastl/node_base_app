@@ -42,37 +42,48 @@ const logger = winston.createLogger({
 });
 
 function getLogFileName(type) {
-  const currentDate = moment().format('YYYY-MM-DD');
-  return `${logsDir}/${currentDate}-${type}.log`;
+  try {
+    const currentDate = moment().format('YYYY-MM-DD');
+    return `${logsDir}/${currentDate}-${type}.log`;
+
+  } catch (err) {
+    console.log('getLog File Name..', err);
+  }
 }
 
 function createNewLogFile() {
-  const currentDate = moment().format('YYYY-MM-DD');
-  const combinedLogFile = getLogFileName('combined');
-  const errorLogFile = getLogFileName('error');
+  try {
+    const currentDate = moment().format('YYYY-MM-DD');
+    const combinedLogFile = getLogFileName('combined');
+    const errorLogFile = getLogFileName('error');
 
-  const combinedTransport = logger.transports.find(t => t.filename && t.filename.includes('combined'));
-  const errorTransport = logger.transports.find(t => t.filename && t.filename.includes('error'));
+    const combinedTransport = logger.transports.find(t => t.filename && t.filename.includes('combined'));
+    const errorTransport = logger.transports.find(t => t.filename && t.filename.includes('error'));
 
-  if (!fs.existsSync(combinedLogFile) && combinedTransport) {
-    combinedTransport.filename = combinedLogFile;
-    logger.info('Created new combined log file: ' + combinedLogFile);
+    if (!fs.existsSync(combinedLogFile) && combinedTransport) {
+      combinedTransport.filename = combinedLogFile;
+      logger.info('Created new combined log file: ' + combinedLogFile);
+    }
+
+    if (!fs.existsSync(errorLogFile) && errorTransport) {
+      errorTransport.filename = errorLogFile;
+      logger.info('Created new error log file: ' + errorLogFile);
+    }
+
+    if (combinedTransport && currentDate !== moment(combinedTransport.filename).format('YYYY-MM-DD')) {
+      combinedTransport.filename = getLogFileName('combined');
+      logger.info('Switching combined log file to: ' + combinedTransport.filename);
+    }
+
+    if (errorTransport && currentDate !== moment(errorTransport.filename).format('YYYY-MM-DD')) {
+      errorTransport.filename = getLogFileName('error');
+      logger.info('Switching error log file to: ' + errorTransport.filename);
+    }
+
+  } catch (err) {
+    console.log('create New Log File...', err);
   }
 
-  if (!fs.existsSync(errorLogFile) && errorTransport) {
-    errorTransport.filename = errorLogFile;
-    logger.info('Created new error log file: ' + errorLogFile);
-  }
-
-  if (combinedTransport && currentDate !== moment(combinedTransport.filename).format('YYYY-MM-DD')) {
-    combinedTransport.filename = getLogFileName('combined');
-    logger.info('Switching combined log file to: ' + combinedTransport.filename);
-  }
-
-  if (errorTransport && currentDate !== moment(errorTransport.filename).format('YYYY-MM-DD')) {
-    errorTransport.filename = getLogFileName('error');
-    logger.info('Switching error log file to: ' + errorTransport.filename);
-  }
 }
 setInterval(createNewLogFile, 60 * 60 * 1000);
 

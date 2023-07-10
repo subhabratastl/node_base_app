@@ -1,5 +1,6 @@
 {
     "ENGLISH":"en",
     "HINDI":"hnd",
-    "ODIA":"od"
+    "ODIA":"od",
+    "DEFAULT":"en"
 }
