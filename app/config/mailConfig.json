@@ -4,5 +4,6 @@
     "stl_mail_host": "smtp.gmail.com",
     "stl_mail_user": "subhabratastl@gmail.com",
     "stl_mail_pass": "pyaiuwdulyjblwfh",
-    "stl_secure": "false"
+    "stl_secure": "false",
+    "stl_service": "gmail"
 }

@@ -31,7 +31,7 @@ const UserDetail =sequelize.define('user_details', {
     created_by: {
       type: DataTypes.INTEGER,
       allowNull: false
-    }
+    },
   });
 module.exports=UserDetail;
 

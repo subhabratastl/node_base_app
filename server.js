@@ -24,7 +24,8 @@ var corsOptions = {
     origin: baseUrl
 };
 
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: false }));
@@ -61,8 +62,8 @@ app.get('/api/auth/getCaptcha', function (req, res) {
         charPreset: '1234567890',  // Use only numbers for the CAPTCHA text
     };
     var captcha = svgCaptcha.create(options);
-    req.session.captcha = captcha.text;
-    console.log('req.session.captcha @@@@@@@@@@@', req.session.captcha);
+    //req.session.captcha = captcha.text;
+    //console.log('req.session.captcha @@@@@@@@@@@', req.session.captcha);
     //req.session.captcha="Hello"  
     //res.setHeader('Content-Type', 'image/svg+xml');
     let dataResponse = {
