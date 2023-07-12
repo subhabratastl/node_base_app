@@ -1,5 +1,7 @@
 const db = require("../connection")
+const logger = require("../../utils/logger")
 
+let path = "/models/roleVsMenuModel/-";
 // Define your model
 let sequelize = db.sequelize;
 
@@ -12,7 +14,7 @@ var roleVsMenuModel=module.exports={
           });
           return { success: true, message: "Data Add Successfully" };
         } catch (err) {
-          console.log('addMenuVsRoleModel ::', err)
+          logger.error(`${path}addRoleVsMenuModel()- ${err}`)
           return { success: false, message: 'Data not inserted properly' };
         }
       },
@@ -48,7 +50,7 @@ var roleVsMenuModel=module.exports={
           });
           return { success: true, message: 'Data Fetching Successfully', data: results };
         } catch (err) {
-          console.log("Get MenuVsRole ::", err);
+          logger.error(`${path}getRoleVsMenuModel()- ${err}`)
           return { success: false, message: 'Data not fetching due to server issue' };
         }
       },
@@ -67,7 +69,7 @@ var roleVsMenuModel=module.exports={
           });
           return { success: true, message: "Data Update Successfully" };
         } catch (err) {
-          console.error('Error executing query:', err);
+          logger.error(`${path}updateRoleVsMenuModel()- ${err}`)
           return { success: false, message: 'Data do not updated due to server issue' };
         }
       },

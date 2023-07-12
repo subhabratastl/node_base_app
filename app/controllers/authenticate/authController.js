@@ -10,7 +10,7 @@ var mailConfig = require("../../config/mailConfig.json")
 const moment = require('moment');
 const otpGenerator = require('otp-generator')
 
-const path = '/controllers/authenticate/authController';
+const path = '/controllers/authenticate/authController/-';
 
 var authController = module.exports = {
 
@@ -38,16 +38,16 @@ var authController = module.exports = {
                                     authToken: token
                                 }
                             }
-                            logger.info(`${path} - loginUser()- ${JSON.stringify(dataResponse)}`)
+                            logger.info(`${path}loginUser()- ${JSON.stringify(dataResponse)}`)
                             res.status(200).send(dataResponse);
-                        }else{
+                        } else {
                             let dataResponse = {
                                 status: resp.errorCode,
                                 message: resp.error.LOGIN,
                                 responseData: {}
                             }
-                            logger.error(`${path} - loginUser()- ${JSON.stringify(dataResponse)}`)
-                            res.status(200).send(dataResponse); 
+                            logger.error(`${path} loginUser()- ${JSON.stringify(dataResponse)}`)
+                            res.status(200).send(dataResponse);
                         }
 
                     } else {
@@ -78,7 +78,7 @@ var authController = module.exports = {
                 res.status(200).send(dataResponse);
             }
         } catch (err) {
-            logger.error(`${path} ${err}`)
+            logger.error(`${path} loginUser()-${err}`)
         }
     },
 
@@ -94,92 +94,109 @@ var authController = module.exports = {
             console.log()
             res.status(200).send(dataResponse);
         } catch (err) {
-            logger.error(`${path} ${err}`)
+            logger.error(`${path}signout()- ${err}`)
         }
     },
 
     forgetPaswrd: async function (req, res, next) {
-        console.log("forget Password....................");
         try {
+            let resp = await resData(req, res, next);
+            let requiredFields = ['op_type']
             let params = req.body;
-            if (params.op_type == 'GET_OTP' || params.op_type == 'RESEND_OTP') {
-                console.log('enterrrrr otp');
-                const currentTime = moment();
-                const newTime = currentTime.add(5, 'minutes');
-                params.expirTime = newTime.format('YYYY-MM-DD HH:mm:ss');
-                params.otp = parseInt(otpGenerator.generate(6, { upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false, }));
-                let otpGet = await authModule.otpCreateOrUpdate(params);
-                if (otpGet.success) {
-                    let sendEmail = await authController.getDataForSendOTPtoEmail(params);
-                    console.log('sendEmail............', sendEmail);
-                    if (sendEmail.success) {
-                        let dataResponse = {
-                            status: "000",
-                            message: "OTP Send to your register Email Id",
-                            responseData: Object.assign({}, ...sendEmail.data)
+            const validateRes = validate.keyAndValueValidate(requiredFields, params);
+            if (validateRes) {
+                if (params.op_type == 'GET_OTP' || params.op_type == 'RESEND_OTP') {
+                    try {
+                        const currentTime = moment();
+                        const newTime = currentTime.add(5, 'minutes');
+                        params.expirTime = newTime.format('YYYY-MM-DD HH:mm:ss');
+                        params.otp = parseInt(otpGenerator.generate(6, { upperCaseAlphabets: false, lowerCaseAlphabets: false, specialChars: false, }));
+                        let otpGet = await authModule.otpCreateOrUpdate(params);
+                        if (otpGet.success) {
+                            let sendEmail = await authController.getDataForSendOTPtoEmail(params);
+                            if (sendEmail.success) {
+                                let dataResponse = {
+                                    status: resp.successCode,
+                                    message: resp.success.OTP_SEND_TO_EMAIL,
+                                    responseData: Object.assign({}, ...sendEmail.data)
+                                }
+                                res.status(200).send(dataResponse)
+                            } else {
+                                let dataResponse = {
+                                    status: resp.errorCode,
+                                    message: resp.error.OTP_SEND_TO_EMAIL + resp.error.COMMON_MSG,
+                                    responseData: {}
+                                }
+                                res.status(200).send(dataResponse)
+                            }
                         }
-                        res.status(200).send(dataResponse)
-                    } else {
-                        let dataResponse = {
-                            status: false,
-                            message: "OTP not Send to your register Email Id",
-                            responseData: {}
+                    } catch (err) {
+                        logger.error(`${path}forgetPaswrd()- ${err}`)
+                    }
+
+
+                } else if (params.op_type == 'VERIFY_OTP') {
+                    try {
+                        const verifyOtp = await authModule.verifyOtpFromMail(params);
+                        if (verifyOtp.Otp_match == 1 && verifyOtp.expire_status == 1) {
+                            let dataResponse = {
+                                status: resp.successCode,
+                                message: resp.success.OTP_VERIFY,
+                                responseData: {}
+                            }
+                            res.status(200).send(dataResponse)
+                        } else {
+                            let dataResponse = {
+                                status: resp.errorCode,
+                                message: resp.error.OTP_VERIFY + resp.error.COMMON_MSG,
+                                responseData: {}
+                            }
+                            res.status(200).send(dataResponse)
                         }
-                        res.status(200).send(dataResponse)
+                    } catch (err) {
+                        logger.error(`${path}forgetPaswrd()- ${err}`)
                     }
-                }
 
-            } else if (params.op_type == 'VERIFY_OTP') {
-                console.log('Verify otp');
-                console.log('paramsssss....verify', params);
-                const verifyOtp = await authModule.verifyOtpFromMail(params);
-                console.log('verify otp after model............', verifyOtp);
-                if (verifyOtp.Otp_match == 1 && verifyOtp.expire_status == 1) {
-                    console.log('if case OTP match...')
-                    let dataResponse = {
-                        status: "000",
-                        message: "OTP Verified Successfully",
-                        responseData: {}
+                } else if (params.op_type == 'PASSWORD_CHANGE') {
+                    try {
+                        let result = await authModule.passwordUpdate(params)
+                        if (result.success) {
+                            let dataResponse = {
+                                status: resp.successCode,
+                                message: resp.success.PASSWORD_CHANGE,
+                                responseData: {}
+                            }
+                            res.status(200).send(dataResponse)
+                        } else {
+                            let dataResponse = {
+                                status: resp.errorCode,
+                                message: resp.error.PASSWORD_CHANGE,
+                                responseData: {}
+                            }
+                            res.status(200).send(dataResponse)
+                        }
+                    } catch (err) {
+                        logger.error(`${path}forgetPaswrd()- ${err}`)
                     }
-                    res.status(200).send(dataResponse)
-                } else {
-                    let dataResponse = {
-                        status: false,
-                        message: "OTP  Not Verified, Please try again",
-                        responseData: {}
-                    }
-                    res.status(200).send(dataResponse)
                 }
-            } else if (params.op_type == 'PASSWORD_CHANGE') {
-                console.log('params....', params);
-                let result = await authModule.passwordUpdate(params)
-                if (result.success) {
-                    let dataResponse = {
-                        status: "000",
-                        message: "Password change successfully",
-                        responseData: {}
-                    }
-                    res.status(200).send(dataResponse)
-                } else {
-                    let dataResponse = {
-                        status: false,
-                        message: "Password not change successfully",
-                        responseData: {}
-                    }
-                    res.status(200).send(dataResponse)
+            } else {
+                let dataResponse = {
+                    status: resp.errorCode,
+                    message: resp.error.VALIDATION_KEY_VALUE,
+                    responseData: {}
                 }
-
+                logger.info(`${path}- forgetPaswrd()- ${JSON.stringify(dataResponse)}`)
+                res.status(200).send(dataResponse);
             }
-        } catch (err) {
-            console.log('forget password.. ', err);
-        }
 
+        } catch (err) {
+            logger.error(`${path}forgetPaswrd()- ${err}`)
+        }
     },
 
     getDataForSendOTPtoEmail: async function (params) {
         try {
             let result = await authModule.getDataForEmail(params);
-            console.log('get adata send OTP email..', result);
             const mailOptions = {
                 from: mailConfig.stl_mail,
                 to: result[0].email_id,
@@ -189,16 +206,14 @@ var authController = module.exports = {
 
             try {
                 const info = await transporter.sendMail(mailOptions);
-                //console.log('Email sent:', info.response);
-                logger.info(`${path}-getDataForSendOTPtoEmail()-${info.response}`)
+                logger.info(`${path}getDataForSendOTPtoEmail()-${info.response}`)
                 return { success: true, message: 'OTP send successfully', data: result };
             } catch (error) {
-                console.log('Error:', error);
-                logger.error(`${path}-getDataForSendOTPtoEmail()-${error}`)
+                logger.error(`${path}getDataForSendOTPtoEmail()-${error}`)
                 return { success: false, message: 'OTP not send' };
             }
         } catch (err) {
-            console.log('get data for email', err)
+            logger.error(`${path}getDataForSendOTPtoEmail()- ${err}`)
         }
 
     },

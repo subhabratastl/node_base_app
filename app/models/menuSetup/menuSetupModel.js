@@ -1,4 +1,7 @@
 const db = require("../connection")
+const logger = require("../../utils/logger")
+
+let path = "/models/menuSetupModel/-";
 
 // Define your model
 let sequelize = db.sequelize;
@@ -13,7 +16,7 @@ var menuModel=module.exports ={
             });
             return { success: true,message:"Added New menu.", data: results };
         } catch (error) {
-            console.error('Error executing query:', error);
+            logger.error(`${path}menuCreateModel()- ${err}`)
             return { success: false,message:'Data not inserted properly' };
         }
     },
@@ -34,7 +37,7 @@ var menuModel=module.exports ={
             console.log('model....',results);
             return { success: true,message:"get ALL menu.", data: results };
         }catch(err){
-            console.error('Error executing query...............:', err);
+            logger.error(`${path}menuGetAllModel()- ${err}`)
             return { success: false,message:'Data not get properly....' };
         }
     },
@@ -46,7 +49,7 @@ var menuModel=module.exports ={
             });
             return { success: true, message: "Data Update Successfully" };
           } catch (err) {
-            console.error('Error executing query:', err);
+            logger.error(`${path}menuUpdateModel()- ${err}`)
             return { success: false, message: 'Data do not updated due to server issue' };
           }
     },
@@ -60,7 +63,7 @@ var menuModel=module.exports ={
             });
             return { success: true, message: "Data fetch Successfully",data:results };
         }catch(err){
-            console.error('Error executing query:', err);
+            logger.error(`${path}getMenuDataForDropdownModel()- ${err}`)
             return { success: false, message: 'Data do not fetch successfully due to server issue' };
         }
     }

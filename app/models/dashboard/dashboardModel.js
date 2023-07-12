@@ -1,4 +1,7 @@
 const db = require("../connection")
+const logger = require("../../utils/logger")
+
+let path = "/models/dashboard/-";
 
 // Define your model
 let sequelize = db.sequelize;
@@ -11,7 +14,7 @@ var dashboardModel=module.exports={
           //return { success: true, data: result };
           return resultData;
         } catch (err) {
-          console.log('get user count model...', err)
+          logger.error(`${path}getUserCountModel()- ${err}`)
           //return { success: false, error: 'Sequelize query failed' };
     
         }
@@ -23,7 +26,7 @@ var dashboardModel=module.exports={
           const [resultData] = await sequelize.query(query, {})
           return resultData;
         } catch (err) {
-          console.log('getGroupWiseUsersCountModel', err);
+          logger.error(`${path}getGroupWiseUsersCountModel()- ${err}`)
         }
       },
 }

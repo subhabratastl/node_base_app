@@ -1,4 +1,7 @@
 const db = require("../connection")
+const logger = require("../../utils/logger")
+
+let path = "/models/roleSetupModel/-";
 
 // Define your model
 let sequelize = db.sequelize;
@@ -15,8 +18,8 @@ var roleSetupModel=module.exports={
           });
           console.log(results); // Display the query results
           return { success: true, data: results, message: 'Created New Role Successfully' };
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}createRoleDetails()- ${err}`)
           return { success: false, message: 'Data not inserted properly' };
         }
       },
@@ -30,8 +33,8 @@ var roleSetupModel=module.exports={
           });
           console.log(results); // Display the query results
           return { success: true, data: results, message: 'Updated Role not Successfully' };
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}updateRoleDetails()- ${err}`)
           return { success: false, message: 'Updated Role not Successfully' };
         }
       },
@@ -59,7 +62,7 @@ var roleSetupModel=module.exports={
           })
           return { success: true, data: resultData, message: 'Get All Roles' };
         } catch (err) {
-          console.log(err);
+          logger.error(`${path}getAllRolesModel()- ${err}`)
           return { success: false, message: 'Data not Fetch properly' };
         }
       },
@@ -79,8 +82,8 @@ var roleSetupModel=module.exports={
           });
           console.log(results); // Display the query results
           return { success: true, data: results, message: 'Data Fetch Successfully' };
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}getRolesForDropdownModel()- ${err}`)
           return { success: false, message: 'Data not Fetch Successfully' };
         }
       },
@@ -93,7 +96,7 @@ var roleSetupModel=module.exports={
           })
           return resultData;
         } catch (err) {
-          console.log(err);
+          logger.error(`${path}updateRoleStatus()- ${err}`)
         }
       },
 }

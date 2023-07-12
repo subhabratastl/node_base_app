@@ -10,7 +10,7 @@ const RoleMaster = require('../schema/roleMasters')
 UserDetail.hasMany(UserMaster, { foreignKey: 'user_code', sourceKey: 'user_code' });
 UserMaster.belongsTo(UserDetail, { foreignKey: 'user_code', targetKey: 'user_code' });
 UserMaster.belongsTo(RoleMaster, { foreignKey: 'fk_role_code', targetKey: 'role_code' });
-let path = "/models/authenticate/";
+let path = "/models/authenticate/-";
 
 var authModel = module.exports = {
 
@@ -67,7 +67,7 @@ var authModel = module.exports = {
                 return {success:false};
             }
         } catch (err) {
-            logger.error(`${path}/getUserData() - Unable to Fetch the user data`)
+            logger.error(`${path}getUserData()- ${err}`)
         }
     },
 
@@ -77,10 +77,9 @@ var authModel = module.exports = {
             const [results] = await sequelize.query(query, {
               replacements: [params.newPassword.trim(),params.myUserCode]
             });
-            console.log('password Update..',results);
             return {success:true,data:results}
-        } catch (error) {
-            console.error('Error executing query:', error);
+        } catch (err) {
+            logger.error(`${path}passwordUpdate()- ${err}`)
             return {success:false}
         }
     },
@@ -93,7 +92,7 @@ var authModel = module.exports = {
               console.log('otpCreateOrUpdate ',results)
               return {success:true};
         } catch (err) {
-            console.log('OTP error..otp send', err);
+            logger.error(`${path}otpCreateOrUpdate()- ${err}`)
             return {success:false};
         }
 
@@ -108,7 +107,7 @@ var authModel = module.exports = {
               });
               return results;
         } catch (err) {
-            console.log('OTP error get data  For email..', err);
+            logger.error(`${path}getDataForEmail()-${err}`)
         }
     },
     verifyOtpFromMail: async function (params) {
@@ -146,8 +145,8 @@ var authModel = module.exports = {
                 return false;
             }
 
-        } catch (err) {
-            console.log('Verify OTP error', err);
+        } catch (err) {    
+            logger.error(`${path}verifyOtpFromMail()- ${err}`)
         }
     },
 }

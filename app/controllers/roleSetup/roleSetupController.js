@@ -1,60 +1,58 @@
 const roleSetupModel=require('../../models/roleSetup')
-
+const resData = require("../../utils/dataResponse")
+const logger = require("../../utils/logger")
+const path = '/controllers/roleSetupController/-';
 var roleSetupController=module.exports={
 
     initialRole: async function (req, res, next) {
+        let resp = await resData(req, res, next);
         var params = req.body;
         params.createdBy = req.userCode;
         params.updatedBy = req.userCode;
         params.myRoleCode = req.roleCodeData;
-        //console.log("roleeeeeeeeeeeeeeeeeeee",req.body);
         if (params.op_type == "ROLE_CREATE") {
-            roleSetupController.createRole(req, res, next);
+            roleSetupController.createRole(req, res, next,params,resp);
         } else if (params.op_type == "ROLE_UPDATE") {
-            roleSetupController.updateRole(req, res, next, params);
+            roleSetupController.updateRole(req, res, next, params,resp);
         } else {
-            roleSetupController.getAllRoles(req, res, next, params);
+            roleSetupController.getAllRoles(req, res, next, params,resp);
         }
     },
-    getAllRoles: async function (req, res, next) {
+    getAllRoles: async function (req, res, next,params,resp) {
         try {
-            let params = req.body;
-            params.myRoleCode = req.roleCodeData;
             let result = await roleSetupModel.getAllRolesModel(params);
-            console.log('Alll Role...', result);
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.FETCH,
                     responseData: {
                         data: result.data,
                         num_rows: result.data[0].total_count
                     }
                 }
+                logger.info(`${path} createResouce()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse);
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.FETCH,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse);
             }
 
         } catch (err) {
-            console.log(err);
+            logger.error(`${path}getAllRoles()- ${err}`)
         }
     },
 
-    createRole: async function (req, res, next) {
+    createRole: async function (req, res, next,params,resp) {
         try {
-            let params = req.body;
-            params.createdBy = req.userCode;
             let result
             if (params.myRoleCode !== 'SADMIN' && params.role_code == 'SADMIN') {
                 let dataResponse = {
-                    status: false,
-                    message: 'Data not inserted Properly',
+                    status: resp.errorCode,
+                    message: resp.error.INSERT,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
@@ -62,98 +60,102 @@ var roleSetupController=module.exports={
                 result = await roleSetupModel.createRoleDetails(params);
                 if (result.success) {
                     let dataResponse = {
-                        status: "000",
-                        message: result.message,
+                        status: resp.successCode,
+                        message: resp.success.INSERT,
                         responseData: {
                             data: result.data
                         }
                     }
+                    logger.info(`${path} createRole()- ${JSON.stringify(dataResponse)}`)
                     res.status(200).send(dataResponse)
                 } else {
                     let dataResponse = {
-                        status: false,
-                        message: result.message,
+                        status: resp.errorCode,
+                        message: resp.error.INSERT,
                         responseData: {}
                     }
                     res.status(200).send(dataResponse)
                 }
             }
         } catch (err) {
-            console.log('create Role..', err);
+            logger.error(`${path}createRole()- ${err}`)
         }
     },
 
-    updateRole: async function (req, res, next, params) {
+    updateRole: async function (req, res, next, params,resp) {
         try {
             params.createdBy = req.userCode;
             let result = await roleSetupModel.updateRoleDetails(params);
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.UPDATE,
                     responseData: {
                         data: result.data
                     }
                 }
+                logger.info(`${path} updateRole()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.UPDATE,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
 
         } catch (err) {
-            console.log('create Role..', err);
+            logger.error(`${path}updateRole()- ${err}`)
         }
     },
     
     getRolesForDropdown: async function (req, res, next) {
         try {
+            let resp = await resData(req, res, next);
             let params = req.body;
             params.myRoleCode = req.roleCodeData;
             let result = await roleSetupModel.getRolesForDropdownModel(params);
-            console.log('Alll Role...', result);
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.FETCH,
                     responseData: {
                         data: result.data
                     }
                 }
+                logger.info(`${path} getRolesForDropdown()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse);
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.FETCH,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse);
             }
 
         } catch (err) {
-            console.log(err);
+            logger.error(`${path}getRolesForDropdown()- ${err}`)
         }
     },
 
     activeDeactiveRole: async function (req, res, next) {
         try {
-            console.log("active and deactive Role..");
+            let resp = await resData(req, res, next);
             let params = req.body;
             params.updatedBy = req.userCode;
             await roleSetupModel.updateRoleStatus(params);
             let dataResponse = {
-                status: "000",
-                message: "Updated Role Successfully",
+                status: resp.successCode,
+                message: resp.success.UPDATE,
                 responseData: {}
             }
+            logger.info(`${path} activeDeactiveRole()- ${JSON.stringify(dataResponse)}`)
             res.status(200).send(dataResponse)
 
         } catch (err) {
-            console.log('active deactive ..', err);
+            logger.error(`${path}activeDeactiveRole()- ${err}`)
         }
     },
 }

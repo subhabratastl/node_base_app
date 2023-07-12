@@ -1,5 +1,8 @@
-const logger=require("../../utils/logger")
+
 const db = require("../connection")
+const logger = require("../../utils/logger")
+
+let path = "/models/profileSetupModel/-";
 
 // Define your model
 let sequelize = db.sequelize;
@@ -11,7 +14,7 @@ const RoleMaster = require('../schema/roleMasters')
 UserDetail.hasMany(UserMaster, { foreignKey: 'user_code', sourceKey: 'user_code' });
 UserMaster.belongsTo(UserDetail, { foreignKey: 'user_code', targetKey: 'user_code' });
 UserMaster.belongsTo(RoleMaster, { foreignKey: 'fk_role_code', targetKey: 'role_code' });
-let path="/models/profileSetupModel/";
+
 
 var profileSetupModel = module.exports = {
 
@@ -29,8 +32,8 @@ var profileSetupModel = module.exports = {
           });
           console.log(results); // Display the query results
           return results;
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}UpdateProfileDetails()- ${err}`)
         }
       },
 
@@ -48,8 +51,8 @@ var profileSetupModel = module.exports = {
           });
           console.log(results); // Display the query results
           return results;
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}UpdateProfilePhoto()- ${err}`)
         }
       },
 
@@ -62,8 +65,8 @@ var profileSetupModel = module.exports = {
           });
           console.log(results); // Display the query results
           return results;
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}getProfile()- ${err}`)
         }
       },
 
@@ -76,8 +79,8 @@ var profileSetupModel = module.exports = {
             console.log(results); // Display the query results
             return { success: true,message:'Old Password Do not match',data:results };
             
-          } catch (error) {
-            console.error('Error executing query:', error);
+          } catch (err) {
+            logger.error(`${path}getPassword()- ${err}`)
             return { success: false,message:'Password do not updated properly, due to server issue',data:results };
           }
       },
@@ -90,8 +93,8 @@ var profileSetupModel = module.exports = {
             });
             //console.log(results); // Display the query results
             return results;
-          } catch (error) {
-            console.error('Error executing query:', error);
+          } catch (err) {
+            logger.error(`${path}passwordUpdate()- ${err}`)
           }
       },
 
@@ -106,7 +109,7 @@ var profileSetupModel = module.exports = {
           });
           return { success: true,message:'Data Fetching Successfully',data:results };
         }catch(err){
-          console.log("Get All Menu ::",err);
+          logger.error(`${path}roleWiseAllMenuModel()- ${err}`)
           return { success: false,message:'Data not fetching due to server issue' };
         }
       }

@@ -1,49 +1,49 @@
 const profileSetupModel = require('../../models/profileSetup')
-var profileController=module.exports={
+const resData = require("../../utils/dataResponse")
+const logger = require("../../utils/logger")
+const path = '/controllers/profileController/-';
+
+var profileController = module.exports = {
 
     updateProfileDetails: async function (req, res, next) {
-        console.log('update profile....');
         try {
+            let resp = await resData(req, res, next);
             var params = req.body;
             params.myUserCode = req.userCode;
-            console.log('update profile....', params);
             if ('updateProfilePhoto' in params) {
-                console.log('if for profile..');
                 let resultData = await profileSetupModel.UpdateProfilePhoto(params);
                 let result = {};
                 let finalResult;
                 if (resultData.affectedRows == 1 || resultData.affectedRows == 0) {
-                    console.log("if case affectedRows...")
                     result = await profileSetupModel.getProfile(params);
                     finalResult = {
                         "user_name": result[0].user_name,
                         "profile_photo": result[0].profile_photo
                     }
                 }
-                console.log('resulttttt...', finalResult);
                 let dataResponse = {
-                    status: "000",
-                    message: "Updated profile details Successfully",
+                    status: resp.successCode,
+                    message: resp.success.UPDATE,
                     responseData: finalResult
                 }
                 res.status(200).send(dataResponse)
             } else {
-                console.log('else for profile..@@@@@@@@@@@@@@@2')
                 let result = await profileSetupModel.UpdateProfileDetails(params);
                 let dataResponse = {
-                    status: "000",
-                    message: "Updated profile details Successfully",
+                    status: resp.successCode,
+                    message: resp.success.UPDATE,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
 
         } catch (err) {
-            console.log('Update Profile..', err);
+            logger.error(`${path}updateProfileDetails()- ${err}`)
         }
     },
     getProfileDetails: async function (req, res, next) {
         try {
+            let resp = await resData(req, res, next);
             var params = req.body;
             params.myUserCode = req.userCode;
             let result = await profileSetupModel.getProfile(params);
@@ -52,77 +52,70 @@ var profileController=module.exports={
                 message: "get User Data",
                 responseData: Object.assign({}, ...result)
             }
+            //logger.info(`${path} getProfileDetails()- ${JSON.stringify(dataResponse)}`)
             res.status(200).send(dataResponse);
         } catch (err) {
-            console.log("get profile details..", err);
+            logger.error(`${path}getProfileDetails()- ${err}`)
         }
     },
 
     updatePassword: async function (req, res, next) {
         try {
+            let resp = await resData(req, res, next);
             var params = req.body;
             params.myUserCode = req.userCode;
-            // let passwordMatch=await generalModel.getPassword(params);
-            // console.log('passweorddddd',passwordMatch[0].password_match);
-            // if(params.oldPassword==)
-            console.log('password... entry');
             let passwordMatch = await profileSetupModel.getPassword(params);
-            console.log('passsword........',passwordMatch);
             if (passwordMatch.data[0].password_match) {
                 let passwordUpdate = await profileSetupModel.passwordUpdate(params);
                 let dataResponse = {
-                    status: "000",
-                    message: "Password change successfully",
+                    status: resp.successCode,
+                    message: resp.success.PASSWORD_CHANGE,
                     responseData: {}
                 }
+                logger.info(`${path} updatePassword()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: "Old password not match with our database",
+                    status: resp.errorCode,
+                    message: resp.error.PASSWORD_CHANGE,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
 
         } catch (err) {
-            console.log("Password change..", err);
+            logger.error(`${path}updatePassword()- ${err}`)
         }
     },
 
     getMenu: async function (req, res, next) {
         try {
+            let resp = await resData(req, res, next);
             var params = req.body;
             params.roleCode = req.roleCodeData;
-            console.log("paramsssss@@@@@@@@@#####", params);
             let result = await profileSetupModel.roleWiseAllMenuModel(params);
-
             let tree = await profileController.groupNodes(result.data);
-
-            console.log("treeeee", tree);
             if (tree.status) {
-
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.FETCH,
                     responseData: tree.data
                 }
+                logger.info(`${path} getMenu()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.FETCH,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
         } catch (err) {
-            console.log("getMenu....", err);
+            logger.error(`${path}getMenu()- ${err}`)
         }
     },
     groupNodes: async function (nodes) {
-
-        console.log('nodessssss', nodes);
         const rootNodes = [];
         const nodeMap = {};
 

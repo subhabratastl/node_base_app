@@ -7,7 +7,11 @@
             "LOGIN":"Login successfully",
             "CAPTCHA":"Captcha verification successful. You may proceed.",
             "TOKEN_VALIDATION":"Token Verify Successfully",
-            "LOGOUT":"Logout successfully"
+            "LOGOUT":"Logout successfully",
+            "OTP_SEND_TO_EMAIL":"OTP Send to your register Email Id.Please Check.",
+            "OTP_VERIFY":"OTP Verified Successfully.",
+            "PASSWORD_CHANGE":"Password change Successfully.",
+            "TOTAL_COUNT":"Total Count fetched Successfully."
         },
         "error": {
             "COMMON_MSG":"Please try again.",
@@ -15,12 +19,16 @@
             "INSERT": "Error: Failed to insert data.",
             "UPDATE": "Error: Failed to update data.",
             "FETCH": "Error: Failed to fetch data.",
-            "LOGIN":"Login failed. Please check your credentials and try again.",
-            "CAPTCHA":"Captcha verification failed.",
-            "REFRESH_CAPTCHA":"Captcha expired. Please refresh and try again.",
-            "OLD_PASSWORD":"Old password does not match. Please enter the correct old password and try again.",  
-            "TOKEN_VALIDATION":"Token is not verified.",
-            "TOKEN_CHECK":"Token Not Found."
+            "LOGIN":"Error: Login failed. Please check your credentials and try again.",
+            "CAPTCHA":"Error: Captcha verification failed.",
+            "REFRESH_CAPTCHA":"Error: Captcha expired. Please refresh and try again.",
+            "OLD_PASSWORD":"Error: Old password does not match. Please enter the correct old password and try again.",  
+            "TOKEN_VALIDATION":"Error: Token is not verified.",
+            "TOKEN_CHECK":"Error: Token Not Found.",
+            "OTP_SEND_TO_EMAIL":"Error: OTP not Send to your register Email Id",
+            "OTP_VERIFY":"Error: OTP Could not Verified Successfully.",
+            "PASSWORD_CHANGE":"Error: Password could not change Successfully.",
+            "TOTAL_COUNT":"ERROR: Failed to total Count."
         }
     },
     "od":{

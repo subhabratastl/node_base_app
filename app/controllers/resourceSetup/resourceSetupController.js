@@ -1,94 +1,99 @@
 const resourceSetupModel=require("../../models/resourceSetup")
+const resData = require("../../utils/dataResponse")
+const logger = require("../../utils/logger")
+const path = '/controllers/resourceSetupController/-';
 var resourceSetupController=module.exports={
     initialResource: async function (req, res, next) {
+        let resp = await resData(req, res, next);
         var params = req.body;
         params.myUserCode = req.userCode;
         if (params.op_type == "CREATE_RESOURCE") {
-            resourceSetupController.createResouce(req, res, next, params);
+            resourceSetupController.createResouce(req, res, next, params,resp);
         } else if (params.op_type == "UPDATE_RESOURCE") {
-            resourceSetupController.updateResouce(req, res, next, params);
+            resourceSetupController.updateResouce(req, res, next, params,resp);
         } else {
-            resourceSetupController.getAllResouceData(req, res, next, params);
+            resourceSetupController.getAllResouceData(req, res, next, params,resp);
         }
     },
 
-    createResouce: async function (req, res, next, params) {
+    createResouce: async function (req, res, next, params,resp) {
         try {
-            console.log('create Resoursessssss....', params);
             let max = 99999;
             let min = 10000;
             params.resourceCode = Math.floor(Math.random() * (max - min + 1) + min);
-            console.log('user codeeee', params);
             let result = await resourceSetupModel.createResourceModel(params);
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.INSERT,
                     responseData: result.data
                 }
+                logger.info(`${path} createResouce()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.INSERT,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
 
         } catch (err) {
-            console.log('get error create resource', err);
+            logger.error(`${path}createResouce- ${err}`)
         }
 
     },
 
-    getAllResouceData: async function (req, res, next, params) {
+    getAllResouceData: async function (req, res, next, params,resp) {
         try {
             let result = await resourceSetupModel.getAllResourceModel(params);
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.FETCH,
                     responseData: {
                         data: result.data,
                         totalRecordCount: result.data[0].totalCount
                     }
                 }
+                logger.info(`${path} getAllResouceData()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.FETCH,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
 
         } catch (err) {
-            console.log('error get Resource data', err);
+            logger.error(`${path}getAllResouceData()- ${err}`)
         }
     },
-    updateResouce: async function (req, res, next, params) {
+    updateResouce: async function (req, res, next, params,resp) {
         try {
             params.myUserCode = req.userCode;
             let result = await resourceSetupModel.updateResouceModel(params);
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.UPDATE,
                     responseData: {}
                 }
+                logger.info(`${path} updateResouce()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.UPDATE,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
         } catch (err) {
-            console.log('create Role..', err);
+            logger.error(`${path}updateResouce()- ${err}`)
         }
     },
 
@@ -97,22 +102,23 @@ var resourceSetupController=module.exports={
             let result = await resourceSetupModel.getResourceForDropdownModel();
             if (result.success) {
                 let dataResponse = {
-                    status: "000",
-                    message: result.message,
+                    status: resp.successCode,
+                    message: resp.success.FETCH,
                     responseData: result.data
                 }
+                logger.info(`${path} getResourceForDropdown()- ${JSON.stringify(dataResponse)}`)
                 res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
-                    status: false,
-                    message: result.message,
+                    status: resp.errorCode,
+                    message: resp.error.FETCH,
                     responseData: {}
                 }
                 res.status(200).send(dataResponse)
             }
 
         } catch (err) {
-            console.log('error get Resource data', err);
+            logger.error(`${path}getResourceForDropdown()- ${err}`)
         }
     },
 }

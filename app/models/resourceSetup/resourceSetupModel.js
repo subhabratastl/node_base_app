@@ -1,5 +1,7 @@
-const logger=require("../../utils/logger")
 const db = require("../connection")
+const logger = require("../../utils/logger")
+
+let path = "/models/resourceSetupModel/-";
 
 // Define your model
 let sequelize = db.sequelize;
@@ -13,8 +15,8 @@ var resourceSetupModel=module.exports={
             replacements: [params.resourceCode, params.resourceName, params.resourceLink, params.isMaintenance, params.recordStatus, params.myUserCode] // Provide values for the placeholders
           });
           return { success: true, message: "Create Resource successfully", data: results };
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}createResourceModel()- ${err}`)
           return { success: false, message: 'Data not inserted properly' };
         }
       },
@@ -32,7 +34,7 @@ var resourceSetupModel=module.exports={
     
           return { success: true, message: "Data Fetch Successfully", data: results };
         } catch (err) {
-          console.error('Error executing query:', error);
+          logger.error(`${path}getAllResourceModel()- ${err}`)
           return { success: false, message: 'Data not fetching due to server issue' };
         }
       },
@@ -44,7 +46,7 @@ var resourceSetupModel=module.exports={
           });
           return { success: true, message: "Data Update Successfully" };
         } catch (err) {
-          console.error('Error executing query:', error);
+          logger.error(`${path}updateResouceModel()- ${err}`)
           return { success: false, message: 'Data do not updated due to server issue' };
         }
       },
@@ -61,7 +63,7 @@ var resourceSetupModel=module.exports={
     
           return { success: true, message: "Data Fetch Successfully", data: results };
         } catch (err) {
-          console.error('Error executing query:', error);
+          logger.error(`${path}getResourceForDropdownModel()- ${err}`)
           return { success: false, message: 'Data not fetching due to server issue' };
         }
       },

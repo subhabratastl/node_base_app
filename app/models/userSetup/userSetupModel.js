@@ -1,5 +1,7 @@
 const db = require("../connection")
+const logger = require("../../utils/logger")
 
+let path = "/models/userSetupModel/-";
 // Define your model
 let sequelize = db.sequelize;
 var userSetupModel=module.exports={
@@ -15,8 +17,8 @@ var userSetupModel=module.exports={
           //console.log(results); // Display the query results
           //return results;
           return { success: true, data: results };
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}createUserDetails()- ${err}`)
           return { success: false, data: 'Data not inserted properly' };
         }
       },
@@ -36,13 +38,13 @@ var userSetupModel=module.exports={
             console.log(resultData);
     
             return { success: true, data: resultData };
-          } catch (error) {
-            console.log('error', error);
+          } catch (err) {
+            logger.error(`${path}createUserDetailsMaster() inside - ${err}`)
             return { success: false, data: 'Data not inserted properly' };
           }
     
-        } catch (error) {
-          console.log('error', error);
+        } catch (err) {
+          logger.error(`${path}createUserDetailsMaster()- ${err}`)
         }
       },
 
@@ -78,7 +80,7 @@ var userSetupModel=module.exports={
           //console.log(result)
           return { success: true, data: resultData };
         } catch (err) {
-          console.log('data @@@@@@@@@@@@@@@@@@@@@@@@@', err);
+          logger.error(`${path}getAllUserList()- ${err}`)
           return { success: false, data: "User list not getting properly" };
         }
       },
@@ -91,7 +93,7 @@ var userSetupModel=module.exports={
           })
           return resultData;
         } catch (err) {
-          console.log(err);
+          logger.error(`${path}updateUserStatus()- ${err}`)
         }
       },
       getUserCountModel: async function () {
@@ -101,7 +103,7 @@ var userSetupModel=module.exports={
           //return { success: true, data: result };
           return resultData;
         } catch (err) {
-          console.log('get user count model...', err)
+          logger.error(`${path}getUserCountModel()- ${err}`)
           //return { success: false, error: 'Sequelize query failed' };
     
         }
@@ -120,8 +122,8 @@ var userSetupModel=module.exports={
             replacements: replacementsData
           });
           return { success: true, data: results };
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}getTotalCount()- ${err}`)
           return { success: false, data: "User list not getting properly" };
         }
       },
@@ -137,8 +139,8 @@ var userSetupModel=module.exports={
           });
           console.log(results); // Display the query results
           return results;
-        } catch (error) {
-          console.error('Error executing query:', error);
+        } catch (err) {
+          logger.error(`${path}UserUpdateDetails()- ${err}`)
         }
       },
 }
