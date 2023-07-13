@@ -6,16 +6,11 @@ let path = "/models/userSetupModel/-";
 let sequelize = db.sequelize;
 var userSetupModel=module.exports={
     createUserDetails: async function (params) {
-
-        /* user_code,display_name,email_id,mobile_no,address,profile_photo,created_by*/
-        const query = 'INSERT INTO user_details (user_code, display_name,email_id,mobile_no,address,profile_photo,created_by) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    
         try {
+          const query = 'INSERT INTO user_details (user_code, display_name,email_id,mobile_no,address,profile_photo,created_by) VALUES (?, ?, ?, ?, ?, ?, ?)';
           const [results] = await sequelize.query(query, {
             replacements: [params.user_codes, params.displayName, params.emailId, params.mobileNo, params.address, 'profilePhoto' in params ? params.profilePhoto : null, params.createdBy] // Provide values for the placeholders
           });
-          //console.log(results); // Display the query results
-          //return results;
           return { success: true, data: results };
         } catch (err) {
           logger.error(`${path}createUserDetails()- ${err}`)
@@ -30,19 +25,15 @@ var userSetupModel=module.exports={
             const [result] = await sequelize.query(query2, {
               replacements: [params.userId]
             })
-            console.log(result[0].encodePassword);
             const query = 'INSERT INTO user_masters (user_code,user_name,password,fk_role_code,created_by) VALUES (?, ?, ?, ?, ?)';
             const [resultData] = await sequelize.query(query, {
               replacements: [params.user_codes, params.userId, result[0].encodePassword, params.roleCode, params.createdBy]
             })
-            console.log(resultData);
-    
             return { success: true, data: resultData };
           } catch (err) {
             logger.error(`${path}createUserDetailsMaster() inside - ${err}`)
-            return { success: false, data: 'Data not inserted properly' };
+            return { success: false};
           }
-    
         } catch (err) {
           logger.error(`${path}createUserDetailsMaster()- ${err}`)
         }
@@ -91,20 +82,20 @@ var userSetupModel=module.exports={
           const [resultData] = await sequelize.query(query, {
             replacements: [params.statusCode, params.statusCode, params.updatedBy, params.updatedBy, params.userCode]
           })
-          return resultData;
+          return {success:true,data:resultData};
         } catch (err) {
           logger.error(`${path}updateUserStatus()- ${err}`)
+          return {success:false}
         }
       },
       getUserCountModel: async function () {
         try {
           const query = 'SELECT COUNT(*) AS totalUsers,CAST(SUM(CASE WHEN record_status = 1 THEN 1 ELSE 0 END)AS SIGNED) AS activeUsers,CAST(SUM(CASE WHEN record_status = 0 THEN 1 ELSE 0 END)AS SIGNED) AS inActiveUsers FROM user_masters WHERE record_status NOT IN (2)';
           const [resultData] = await sequelize.query(query, {})
-          //return { success: true, data: result };
-          return resultData;
+          return { success: true, data: resultData };
         } catch (err) {
           logger.error(`${path}getUserCountModel()- ${err}`)
-          //return { success: false, error: 'Sequelize query failed' };
+          return { success: false };
     
         }
       },
@@ -124,7 +115,7 @@ var userSetupModel=module.exports={
           return { success: true, data: results };
         } catch (err) {
           logger.error(`${path}getTotalCount()- ${err}`)
-          return { success: false, data: "User list not getting properly" };
+          return { success: false };
         }
       },
 
@@ -137,10 +128,10 @@ var userSetupModel=module.exports={
           const [results] = await sequelize.query(query, {
             replacements: [params.displayName, params.emailId, params.mobileNo, params.profilePhoto, params.address, params.updatedBy, params.roleCode, params.userCode, params.userCode] // Provide values for the placeholders
           });
-          console.log(results); // Display the query results
-          return results;
+          return {success:true,data:results};
         } catch (err) {
           logger.error(`${path}UserUpdateDetails()- ${err}`)
+          return {success:false}
         }
       },
 }

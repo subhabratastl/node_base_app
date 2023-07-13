@@ -12,31 +12,53 @@ var profileController = module.exports = {
             params.myUserCode = req.userCode;
             if ('updateProfilePhoto' in params) {
                 let resultData = await profileSetupModel.UpdateProfilePhoto(params);
-                let result = {};
-                let finalResult;
-                if (resultData.affectedRows == 1 || resultData.affectedRows == 0) {
-                    result = await profileSetupModel.getProfile(params);
-                    finalResult = {
-                        "user_name": result[0].user_name,
-                        "profile_photo": result[0].profile_photo
+                if (resultData.success) {
+                    let result = {};
+                    let finalResult = {};
+                    console.log("resultssss......@@@@",resultData)
+                    if (resultData.data.affectedRows == 1 || resultData.data.affectedRows == 0) {
+                        result = await profileSetupModel.getProfile(params);
+                        console.log("get profileeeee",result);
+                        if (result.success) {
+                            finalResult = {
+                                "user_name": result.data[0].user_name,
+                                "profile_photo": result.data[0].profile_photo
+                            }
+                        }
                     }
+                    let dataResponse = {
+                        status: resp.successCode,
+                        message: resp.success.UPDATE,
+                        responseData: finalResult
+                    }
+                    res.status(200).send(dataResponse)
+                } else {
+                    let dataResponse = {
+                        status: resp.errorCode,
+                        message: resp.error.UPDATE,
+                        responseData: {}
+                    }
+                    res.status(200).send(dataResponse)
                 }
-                let dataResponse = {
-                    status: resp.successCode,
-                    message: resp.success.UPDATE,
-                    responseData: finalResult
-                }
-                res.status(200).send(dataResponse)
+
             } else {
                 let result = await profileSetupModel.UpdateProfileDetails(params);
-                let dataResponse = {
-                    status: resp.successCode,
-                    message: resp.success.UPDATE,
-                    responseData: {}
+                if (result.success) {
+                    let dataResponse = {
+                        status: resp.successCode,
+                        message: resp.success.UPDATE,
+                        responseData: {}
+                    }
+                    res.status(200).send(dataResponse)
+                } else {
+                    let dataResponse = {
+                        status: resp.errorCode,
+                        message: resp.error.UPDATE,
+                        responseData: {}
+                    }
+                    res.status(200).send(dataResponse)
                 }
-                res.status(200).send(dataResponse)
             }
-
         } catch (err) {
             logger.error(`${path}updateProfileDetails()- ${err}`)
         }
@@ -47,13 +69,22 @@ var profileController = module.exports = {
             var params = req.body;
             params.myUserCode = req.userCode;
             let result = await profileSetupModel.getProfile(params);
-            let dataResponse = {
-                status: "000",
-                message: "get User Data",
-                responseData: Object.assign({}, ...result)
+            if (result.success) {
+                let dataResponse = {
+                    status: resp.successCode,
+                    message: resp.success.FETCH,
+                    responseData: Object.assign({}, ...result.data)
+                }
+                //logger.info(`${path} getProfileDetails()- ${JSON.stringify(dataResponse)}`)
+                res.status(200).send(dataResponse);
+            } else {
+                let dataResponse = {
+                    status: resp.errorCode,
+                    message: resp.error.FETCH,
+                    responseData: {}
+                }
+                res.status(200).send(dataResponse);
             }
-            //logger.info(`${path} getProfileDetails()- ${JSON.stringify(dataResponse)}`)
-            res.status(200).send(dataResponse);
         } catch (err) {
             logger.error(`${path}getProfileDetails()- ${err}`)
         }
@@ -65,15 +96,33 @@ var profileController = module.exports = {
             var params = req.body;
             params.myUserCode = req.userCode;
             let passwordMatch = await profileSetupModel.getPassword(params);
-            if (passwordMatch.data[0].password_match) {
-                let passwordUpdate = await profileSetupModel.passwordUpdate(params);
-                let dataResponse = {
-                    status: resp.successCode,
-                    message: resp.success.PASSWORD_CHANGE,
-                    responseData: {}
+            if (passwordMatch.success) {
+                if (passwordMatch.data[0].password_match) {
+                    let passwordUpdate = await profileSetupModel.passwordUpdate(params);
+                    if (passwordUpdate.success) {
+                        let dataResponse = {
+                            status: resp.successCode,
+                            message: resp.success.PASSWORD_CHANGE,
+                            responseData: {}
+                        }
+                        logger.info(`${path} updatePassword()- ${JSON.stringify(dataResponse)}`)
+                        res.status(200).send(dataResponse)
+                    } else {
+                        let dataResponse = {
+                            status: resp.errorCode,
+                            message: resp.error.PASSWORD_CHANGE,
+                            responseData: {}
+                        }
+                        res.status(200).send(dataResponse)
+                    }
+                } else {
+                    let dataResponse = {
+                        status: resp.errorCode,
+                        message: resp.error.PASSWORD_MATCH,
+                        responseData: {}
+                    }
+                    res.status(200).send(dataResponse)
                 }
-                logger.info(`${path} updatePassword()- ${JSON.stringify(dataResponse)}`)
-                res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
                     status: resp.errorCode,
@@ -82,7 +131,6 @@ var profileController = module.exports = {
                 }
                 res.status(200).send(dataResponse)
             }
-
         } catch (err) {
             logger.error(`${path}updatePassword()- ${err}`)
         }
@@ -94,15 +142,24 @@ var profileController = module.exports = {
             var params = req.body;
             params.roleCode = req.roleCodeData;
             let result = await profileSetupModel.roleWiseAllMenuModel(params);
-            let tree = await profileController.groupNodes(result.data);
-            if (tree.status) {
-                let dataResponse = {
-                    status: resp.successCode,
-                    message: resp.success.FETCH,
-                    responseData: tree.data
+            if (result.success) {
+                let tree = await profileController.groupNodes(result.data);
+                if (tree.status) {
+                    let dataResponse = {
+                        status: resp.successCode,
+                        message: resp.success.FETCH,
+                        responseData: tree.data
+                    }
+                    logger.info(`${path} getMenu()- ${JSON.stringify(dataResponse)}`)
+                    res.status(200).send(dataResponse)
+                } else {
+                    let dataResponse = {
+                        status: resp.errorCode,
+                        message: resp.error.FETCH,
+                        responseData: {}
+                    }
+                    res.status(200).send(dataResponse)
                 }
-                logger.info(`${path} getMenu()- ${JSON.stringify(dataResponse)}`)
-                res.status(200).send(dataResponse)
             } else {
                 let dataResponse = {
                     status: resp.errorCode,

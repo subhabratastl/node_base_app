@@ -6,13 +6,13 @@ const resData = require("../../utils/dataResponse")
 const validate = require("../../utils/validationKeyValue")
 const authModule = require("../../models/authenticate")
 const transporter = require("../../services/mailSetup")
-var mailConfig = require("../../config/mailConfig.json")
+const mailConfig = require("../../config/mailConfig.json")
 const moment = require('moment');
 const otpGenerator = require('otp-generator')
 
 const path = '/controllers/authenticate/authController/-';
 
-var authController = module.exports = {
+let authController = module.exports = {
 
     loginUser: async function (req, res, next) {
         try {
@@ -82,7 +82,7 @@ var authController = module.exports = {
         }
     },
 
-    signout: async function (req, res, next) {
+   signout: async function (req, res, next) {
         try {
             let resp = await resData(req, res, next);
             delete req.headers['authorization'];

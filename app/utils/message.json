@@ -11,7 +11,8 @@
             "OTP_SEND_TO_EMAIL":"OTP Send to your register Email Id.Please Check.",
             "OTP_VERIFY":"OTP Verified Successfully.",
             "PASSWORD_CHANGE":"Password change Successfully.",
-            "TOTAL_COUNT":"Total Count fetched Successfully."
+            "TOTAL_COUNT":"Total Count fetched Successfully.",
+            "CAPTCHA_FETCH":"Captcha fetched successfully"
         },
         "error": {
             "COMMON_MSG":"Please try again.",
@@ -26,9 +27,11 @@
             "TOKEN_VALIDATION":"Error: Token is not verified.",
             "TOKEN_CHECK":"Error: Token Not Found.",
             "OTP_SEND_TO_EMAIL":"Error: OTP not Send to your register Email Id",
-            "OTP_VERIFY":"Error: OTP Could not Verified Successfully.",
+            "OTP_VERIFY":"Error: Incorrect OTP.",
             "PASSWORD_CHANGE":"Error: Password could not change Successfully.",
-            "TOTAL_COUNT":"ERROR: Failed to total Count."
+            "TOTAL_COUNT":"ERROR: Failed to total Count.",
+            "CAPTCHA_FETCH":"ERROR: Captcha could not fetched successfully",
+            "PASSWORD_MATCH":"Old password incorrect."
         }
     },
     "od":{

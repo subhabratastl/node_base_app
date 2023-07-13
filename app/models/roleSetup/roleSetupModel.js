@@ -80,11 +80,10 @@ var roleSetupModel=module.exports={
           const [results] = await sequelize.query(query, {
             replacements: replacementsData
           });
-          console.log(results); // Display the query results
-          return { success: true, data: results, message: 'Data Fetch Successfully' };
+          return { success: true, data: results};
         } catch (err) {
           logger.error(`${path}getRolesForDropdownModel()- ${err}`)
-          return { success: false, message: 'Data not Fetch Successfully' };
+          return { success: false};
         }
       },
 
@@ -94,9 +93,10 @@ var roleSetupModel=module.exports={
           const [resultData] = await sequelize.query(query, {
             replacements: [params.statusCode, params.updatedBy, params.roleCode]
           })
-          return resultData;
+          return { success: true, data: resultData};
         } catch (err) {
           logger.error(`${path}updateRoleStatus()- ${err}`)
+          return { success: false};
         }
       },
 }

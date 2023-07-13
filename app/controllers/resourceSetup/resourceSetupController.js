@@ -99,6 +99,7 @@ var resourceSetupController=module.exports={
 
     getResourceForDropdown:async function(req,res,next){
         try {
+            let resp = await resData(req, res, next);
             let result = await resourceSetupModel.getResourceForDropdownModel();
             if (result.success) {
                 let dataResponse = {

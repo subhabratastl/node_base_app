@@ -2,6 +2,8 @@ const router = require("express").Router();
 const languageVerify = require("../middlewares/validateLang")
 const { verifyToken } = require("../middlewares/authJwt");
 
+const getCaptcha=require("../utils/captchaSetup")
+
 const authenticateController = require("../controllers/authenticate")
 const profileController=require("../controllers/profileSetup")
 const roleSetupController=require("../controllers/roleSetup")
@@ -17,5 +19,6 @@ const resourceSetupController=require("../controllers/resourceSetup")
  router.get(["/getProfileDetails","/indexGet/getProfileDetails"], languageVerify, verifyToken, profileController.getProfileDetails);
  router.get(["/getRoleMenu","/indexGet/getRoleMenu"], languageVerify, verifyToken, profileController.getMenu);
  router.get(["/getMenuData","/indexGet/getMenuData"], languageVerify, verifyToken, menuSetupController.getMenuDataForDropdown);
+ router.get(["/getCaptcha","/indexGet/getCaptcha"],getCaptcha.captchCreate)
 
 module.exports = router

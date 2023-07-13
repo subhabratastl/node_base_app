@@ -18,100 +18,88 @@ UserMaster.belongsTo(RoleMaster, { foreignKey: 'fk_role_code', targetKey: 'role_
 
 var profileSetupModel = module.exports = {
 
-    UpdateProfileDetails: async function (params) {
-        console.log("profile model......!!!!!!!!!!!!!!!!!")
-        /* user_code,display_name,email_id,mobile_no,address,profile_photo,created_by*/
-        // if (params.profilePhoto == "") {
-        //   params.profilePhoto = null
-        // }
-        const query = 'UPDATE user_details SET display_name=?,email_id=?,mobile_no=?,address=? Where user_code=?';
-    
-        try {
-          const [results] = await sequelize.query(query, {
-            replacements: [params.displayName,params.emailId,params.mobileNo, params.address, params.myUserCode] // Provide values for the placeholders
-          });
-          console.log(results); // Display the query results
-          return results;
-        } catch (err) {
-          logger.error(`${path}UpdateProfileDetails()- ${err}`)
-        }
-      },
+  UpdateProfileDetails: async function (params) {
+    const query = 'UPDATE user_details SET display_name=?,email_id=?,mobile_no=?,address=? Where user_code=?';
 
-      UpdateProfilePhoto: async function (params) {
-        console.log("profile model......!!!!!!!!!!!!!!!!!",params)
-        /* user_code,display_name,email_id,mobile_no,address,profile_photo,created_by*/
-        // if (params.profilePhoto == "") {
-        //   params.profilePhoto = null
-        // }
-        const query = 'UPDATE user_details SET profile_photo=? Where user_code=?';
-    
-        try {
-          const [results] = await sequelize.query(query, {
-            replacements: [params.updateProfilePhoto,params.myUserCode] // Provide values for the placeholders
-          });
-          console.log(results); // Display the query results
-          return results;
-        } catch (err) {
-          logger.error(`${path}UpdateProfilePhoto()- ${err}`)
-        }
-      },
+    try {
+      const [results] = await sequelize.query(query, {
+        replacements: [params.displayName, params.emailId, params.mobileNo, params.address, params.myUserCode] // Provide values for the placeholders
+      });
+      return { success: true, data: results };
+    } catch (err) {
+      logger.error(`${path}UpdateProfileDetails()- ${err}`)
+      return { success: false }
+    }
+  },
 
-      getProfile:async function(params){
-        const query = 'SELECT ud.display_name,ud.email_id,ud.mobile_no,ud.address,ud.profile_photo,um.user_name,rm.role_name FROM user_details ud INNER JOIN user_masters um ON (ud.user_code=um.user_code) INNER JOIN role_masters rm ON (rm.role_code=um.fk_role_code) Where ud.user_code=?';
-    
-        try {
-          const [results] = await sequelize.query(query, {
-            replacements: [params.myUserCode] // Provide values for the placeholders
-          });
-          console.log(results); // Display the query results
-          return results;
-        } catch (err) {
-          logger.error(`${path}getProfile()- ${err}`)
-        }
-      },
+  UpdateProfilePhoto: async function (params) {
+    const query = 'UPDATE user_details SET profile_photo=? Where user_code=?';
 
-      getPassword:async function(params){
-        const query='SELECT IF(password=?, 1, 0) AS password_match FROM user_masters WHERE user_code = ?';
-        try {
-            const [results] = await sequelize.query(query, {
-              replacements: [params.oldPassword,params.myUserCode] // Provide values for the placeholders
-            });
-            console.log(results); // Display the query results
-            return { success: true,message:'Old Password Do not match',data:results };
-            
-          } catch (err) {
-            logger.error(`${path}getPassword()- ${err}`)
-            return { success: false,message:'Password do not updated properly, due to server issue',data:results };
-          }
-      },
+    try {
+      const [results] = await sequelize.query(query, {
+        replacements: [params.updateProfilePhoto, params.myUserCode] // Provide values for the placeholders
+      });
+      return { success: true, data: results };
+    } catch (err) {
+      logger.error(`${path}UpdateProfilePhoto()- ${err}`)
+      return { success: false };
+    }
+  },
 
-      passwordUpdate:async function(params){
-        const query='UPDATE user_masters SET password=? WHERE user_code=?';
-        try {
-            const [results] = await sequelize.query(query, {
-              replacements: [params.newPassword,params.myUserCode] // Provide values for the placeholders
-            });
-            //console.log(results); // Display the query results
-            return results;
-          } catch (err) {
-            logger.error(`${path}passwordUpdate()- ${err}`)
-          }
-      },
+  getProfile: async function (params) {
+    const query = 'SELECT ud.display_name,ud.email_id,ud.mobile_no,ud.address,ud.profile_photo,um.user_name,rm.role_name FROM user_details ud INNER JOIN user_masters um ON (ud.user_code=um.user_code) INNER JOIN role_masters rm ON (rm.role_code=um.fk_role_code) Where ud.user_code=?';
 
-      roleWiseAllMenuModel:async function(params){
-        try{
-          let query= "SELECT mm.id,mm.parent_id as parent,mm.icon_class AS menuIcon,mvr.alias_menu_name AS menuName,mvr.access_type AS accessType, ";
-          query += "ifnull(rm.resource_link,0) AS menuPath  from menu_master mm left join resource_master rm ON (rm.resource_code=mm.resource_code) ";
-          query += "left join menu_vs_role mvr ON (mvr.menu_code=mm.id) WHERE mvr.role_code=?  AND mvr.record_status=1 AND mm.record_status=1";
-          query += " order by mm.id;";
-          const [results] = await sequelize.query(query, {
-            replacements:[params.roleCode]
-          });
-          return { success: true,message:'Data Fetching Successfully',data:results };
-        }catch(err){
-          logger.error(`${path}roleWiseAllMenuModel()- ${err}`)
-          return { success: false,message:'Data not fetching due to server issue' };
-        }
-      }
-      
+    try {
+      const [results] = await sequelize.query(query, {
+        replacements: [params.myUserCode] // Provide values for the placeholders
+      });
+      return { success: true, data: results };
+    } catch (err) {
+      logger.error(`${path}getProfile()- ${err}`)
+      return { success: false }
+    }
+  },
+
+  getPassword: async function (params) {
+    const query = 'SELECT IF(password=?, 1, 0) AS password_match FROM user_masters WHERE user_code = ?';
+    try {
+      const [results] = await sequelize.query(query, {
+        replacements: [params.oldPassword, params.myUserCode] // Provide values for the placeholders
+      });
+      return { success: true, data: results };
+    } catch (err) {
+      logger.error(`${path}getPassword()- ${err}`)
+      return { success: false };
+    }
+  },
+
+  passwordUpdate: async function (params) {
+    const query = 'UPDATE user_masters SET password=? WHERE user_code=?';
+    try {
+      const [results] = await sequelize.query(query, {
+        replacements: [params.newPassword, params.myUserCode] // Provide values for the placeholders
+      });
+      return {success:true,data:results};
+    } catch (err) {
+      logger.error(`${path}passwordUpdate()- ${err}`)
+      return {success:false}
+    }
+  },
+
+  roleWiseAllMenuModel: async function (params) {
+    try {
+      let query = "SELECT mm.id,mm.parent_id as parent,mm.icon_class AS menuIcon,mvr.alias_menu_name AS menuName,mvr.access_type AS accessType, ";
+      query += "ifnull(rm.resource_link,0) AS menuPath  from menu_master mm left join resource_master rm ON (rm.resource_code=mm.resource_code) ";
+      query += "left join menu_vs_role mvr ON (mvr.menu_code=mm.id) WHERE mvr.role_code=?  AND mvr.record_status=1 AND mm.record_status=1";
+      query += " order by mm.id;";
+      const [results] = await sequelize.query(query, {
+        replacements: [params.roleCode]
+      });
+      return { success: true, data: results };
+    } catch (err) {
+      logger.error(`${path}roleWiseAllMenuModel()- ${err}`)
+      return { success: false };
+    }
+  }
+
 }

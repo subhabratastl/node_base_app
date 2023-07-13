@@ -1,8 +1,8 @@
-const roleSetupModel=require('../../models/roleSetup')
+const roleSetupModel = require('../../models/roleSetup')
 const resData = require("../../utils/dataResponse")
 const logger = require("../../utils/logger")
 const path = '/controllers/roleSetupController/-';
-var roleSetupController=module.exports={
+var roleSetupController = module.exports = {
 
     initialRole: async function (req, res, next) {
         let resp = await resData(req, res, next);
@@ -11,14 +11,14 @@ var roleSetupController=module.exports={
         params.updatedBy = req.userCode;
         params.myRoleCode = req.roleCodeData;
         if (params.op_type == "ROLE_CREATE") {
-            roleSetupController.createRole(req, res, next,params,resp);
+            roleSetupController.createRole(req, res, next, params, resp);
         } else if (params.op_type == "ROLE_UPDATE") {
-            roleSetupController.updateRole(req, res, next, params,resp);
+            roleSetupController.updateRole(req, res, next, params, resp);
         } else {
-            roleSetupController.getAllRoles(req, res, next, params,resp);
+            roleSetupController.getAllRoles(req, res, next, params, resp);
         }
     },
-    getAllRoles: async function (req, res, next,params,resp) {
+    getAllRoles: async function (req, res, next, params, resp) {
         try {
             let result = await roleSetupModel.getAllRolesModel(params);
             if (result.success) {
@@ -46,7 +46,7 @@ var roleSetupController=module.exports={
         }
     },
 
-    createRole: async function (req, res, next,params,resp) {
+    createRole: async function (req, res, next, params, resp) {
         try {
             let result
             if (params.myRoleCode !== 'SADMIN' && params.role_code == 'SADMIN') {
@@ -82,7 +82,7 @@ var roleSetupController=module.exports={
         }
     },
 
-    updateRole: async function (req, res, next, params,resp) {
+    updateRole: async function (req, res, next, params, resp) {
         try {
             params.createdBy = req.userCode;
             let result = await roleSetupModel.updateRoleDetails(params);
@@ -109,7 +109,7 @@ var roleSetupController=module.exports={
             logger.error(`${path}updateRole()- ${err}`)
         }
     },
-    
+
     getRolesForDropdown: async function (req, res, next) {
         try {
             let resp = await resData(req, res, next);
@@ -145,15 +145,23 @@ var roleSetupController=module.exports={
             let resp = await resData(req, res, next);
             let params = req.body;
             params.updatedBy = req.userCode;
-            await roleSetupModel.updateRoleStatus(params);
-            let dataResponse = {
-                status: resp.successCode,
-                message: resp.success.UPDATE,
-                responseData: {}
+            let result = await roleSetupModel.updateRoleStatus(params);
+            if (result.success) {
+                let dataResponse = {
+                    status: resp.successCode,
+                    message: resp.success.UPDATE,
+                    responseData: {}
+                }
+                logger.info(`${path} activeDeactiveRole()- ${JSON.stringify(dataResponse)}`)
+                res.status(200).send(dataResponse)
+            } else {
+                let dataResponse = {
+                    status: resp.errorCode,
+                    message: resp.error.UPDATE,
+                    responseData: {}
+                }
+                res.status(200).send(dataResponse)
             }
-            logger.info(`${path} activeDeactiveRole()- ${JSON.stringify(dataResponse)}`)
-            res.status(200).send(dataResponse)
-
         } catch (err) {
             logger.error(`${path}activeDeactiveRole()- ${err}`)
         }
