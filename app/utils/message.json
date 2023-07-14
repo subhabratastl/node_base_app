@@ -31,7 +31,11 @@
             "PASSWORD_CHANGE":"Error: Password could not change Successfully.",
             "TOTAL_COUNT":"ERROR: Failed to total Count.",
             "CAPTCHA_FETCH":"ERROR: Captcha could not fetched successfully",
-            "PASSWORD_MATCH":"Old password incorrect."
+            "PASSWORD_MATCH":"Old password incorrect.",
+            "EMAIL_MATCH":"Email id is available.",
+            "PHONE_MATCH":"Phone No is available",
+            "USERNAME_MATCH":"User Name is available",
+            "USER_CHECK":"Email id,Phone No & User name are available"
         }
     },
     "od":{

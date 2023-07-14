@@ -24,36 +24,66 @@ var userSetupController = module.exports = {
             let max = 999999;
             let min = 100000;
             params.user_codes = Math.floor(Math.random() * (max - min + 1) + min);
-            console.log('user codeeee', params);
-            let result = await userSetupModel.createUserDetails(params);
-            if (result.success) {
-                let insertUserMaster = await userSetupModel.createUserDetailsMaster(params);
-                if (insertUserMaster.success) {
-                    let dataResponse = {
-                        status: resp.successCode,
-                        message: resp.success.INSERT,
-                        responseData: {
-                            data: insertUserMaster.data
+            Promise.all([
+                userSetupController.emailValidation(params.emailId),
+                userSetupController.mobileValidation(params.mobileNo),
+                userSetupController.userNameValidation(params.userId),
+            ])
+            .then(async([resultEmail,resultMobile,resultUserName])=>{
+                if(resultEmail.data[0].matchData==0 &&  resultMobile.data[0].matchData==0 && resultUserName.data[0].matchData==0){
+                    let result = await userSetupModel.createUserDetails(params);
+                    if (result.success) {
+                        let insertUserMaster = await userSetupModel.createUserDetailsMaster(params);
+                        if (insertUserMaster.success) {
+                            let dataResponse = {
+                                status: resp.successCode,
+                                message: resp.success.INSERT,
+                                responseData: {
+                                    data: insertUserMaster.data
+                                }
+                            }
+                            logger.info(`${path} createUser()- ${JSON.stringify(dataResponse)}`)
+                            res.status(200).send(dataResponse)
+                        } else {
+                            let dataResponse = {
+                                status: resp.errorCode,
+                                message: resp.error.INSERT,
+                                responseData: {}
+                            }
+                            res.status(200).send(dataResponse)
                         }
+                    } else {
+                        let dataResponse = {
+                            status: resp.errorCode,
+                            message: resp.error.INSERT,
+                            responseData: {}
+                        }
+                        res.status(200).send(dataResponse)
                     }
-                    logger.info(`${path} createUser()- ${JSON.stringify(dataResponse)}`)
-                    res.status(200).send(dataResponse)
-                } else {
+                }else{
                     let dataResponse = {
                         status: resp.errorCode,
-                        message: resp.error.INSERT,
-                        responseData: {}
+                        responseData:{}
                     }
-                    res.status(200).send(dataResponse)
+                    if (resultUserName.data[0].matchData ==1){
+                        dataResponse.message= resp.error.USERNAME_MATCH,
+                        logger.info(`${path} createUser()- ${JSON.stringify(dataResponse)}`)
+                        res.status(200).send(dataResponse)
+                    }else if (resultEmail.data[0].matchData ==1){
+                        dataResponse.message= resp.error.EMAIL_MATCH,
+                        logger.info(`${path} createUser()- ${JSON.stringify(dataResponse)}`)
+                        res.status(200).send(dataResponse)
+                    }else if (resultMobile.data[0].matchData ==1){
+                        dataResponse.message= resp.error.PHONE_MATCH,
+                        logger.info(`${path} createUser()- ${JSON.stringify(dataResponse)}`)
+                        res.status(200).send(dataResponse)
+                    }
                 }
-            } else {
-                let dataResponse = {
-                    status: resp.errorCode,
-                    message: resp.error.INSERT,
-                    responseData: {}
-                }
-                res.status(200).send(dataResponse)
-            }
+            })
+            .catch((err)=>{
+                logger.error(`${path}createUser()- ${err}`)
+            })
+            
 
         } catch (err) {
             logger.error(`${path}createUser()- ${err}`)
@@ -172,6 +202,35 @@ var userSetupController = module.exports = {
             logger.error(`${path}getUsersCount()- ${err}`)
         }
     },
-
+    emailValidation:async function(userEmail){
+        try{
+            let data={emailId:userEmail}
+            let result= await userSetupModel.validationData(data);
+            return result;
+        }catch(err){
+            logger.error(`${path}getUsersCount()- ${err}`)
+        }
+        
+    },
+    mobileValidation:async function(userMobile){
+        try{
+            let data={mobileNo:userMobile}
+            let result= await userSetupModel.validationData(data);
+            return result;
+        }catch(err){
+            logger.error(`${path}getUsersCount()- ${err}`)
+        }
+        
+    },
+    userNameValidation:async function(userName){
+        try{
+            let data={userId:userName}
+            let result= await userSetupModel.validationData(data);
+            return result;
+        }catch(err){
+            logger.error(`${path}getUsersCount()- ${err}`)
+        }
+        
+    }
 
 }
